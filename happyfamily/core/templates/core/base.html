@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{% block title %}HappyFamily{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'core/styles.css' %}" />
+    <script src="{% static 'core/scripts.js' %}" defer></script>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+      <div class="container-fluid">
+        <a class="navbar-brand fw-bold" href="{% url 'student_list' %}"
+          >Baxtli Oila</a
+        >
+        <div class="d-flex gap-2">
+          {% if request.user.role == 'admin' %}
+          <a
+            style="color: brown"
+            class="btn btn-outline-primary btn-sm"
+            href="{% url 'student_list' %}"
+            >Tolibalar</a
+          >
+          <a
+            style="color: brown"
+            class="btn btn-outline-secondary btn-sm"
+            href="{% url 'user_list' %}"
+            >Ustozalar</a
+          >
+          {% endif %}
+          <span style="color: rgb(4, 82, 146);" class="align-self-center">👤 {{ request.user.username }}</span>
+          <a style="color: red;" class="btn btn-outline-danger btn-sm" href="{% url 'logout' %}"
+            >Chiqish</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <div class="content-wrapper">{% block content %}{% endblock %}</div>
+  </body>
+</html>

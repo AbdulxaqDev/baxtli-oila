@@ -1,0 +1,136 @@
+{% extends "core/base.html" %}
+{% block title %}Student List - HappyFamily{% endblock %}
+{% block content %}
+<div style="display: flex; gap: 32px; flex-wrap: wrap; max-width: 1100px; margin: 0 auto 25px;">
+  
+  <div style="flex: 1 1 480px; min-width: 300px;">
+    <h2>Tolibalar Ro'yxati</h2>
+
+    <form method="get" class="mb-3" style="max-width: 600px;">
+      <div style="display: flex; gap: 12px; margin-bottom: 8px;">
+        <div style="flex: 1; margin-right: 20px;">
+          <label for="grade" style="display: block; font-weight: 600; margin-bottom: 4px;">Grade:</label>
+          <input id="grade" type="number" name="grade" value="{{ request.GET.grade }}" style="width: 100%; padding: 6px 8px; border-radius: 6px; border: 1px solid #ccc;" />
+        </div>
+        <div style="flex: 1;">
+          <label for="group" style="display: block; font-weight: 600; margin-bottom: 4px;">Group:</label>
+          <input id="group" type="number" name="group" value="{{ request.GET.group }}" style="width: 100%; padding: 6px 8px; border-radius: 6px; border: 1px solid #ccc;" />
+        </div>
+      </div>
+
+      <div style="text-align: right;">
+        <button class="btn btn-primary btn-sm" type="submit" style="padding: 6px 16px;">Filter</button>
+      </div>
+    </form>
+  </div>
+  
+  <div style="flex: 1 1 480px; min-width: 300px;">
+    <h4>Add New Student</h4>
+    <form method="post" action="{% url 'add_student' %}" class="mb-4" style="max-width: 500px; margin: 0 auto;">
+      {% csrf_token %}
+      <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+        <div style="flex: 1 1 45%;">
+          <label for="telegram_id" style="display: block; font-weight: 600; margin-bottom: 4px;">Telegram ID</label>
+          <input id="telegram_id" name="telegram_id" type="text" class="form-control" placeholder="Telegram ID" required />
+        </div>
+
+        <div style="flex: 1 1 45%;">
+          <label for="surname" style="display: block; font-weight: 600; margin-bottom: 4px;">Familya</label>
+          <input id="surname" name="surname" type="text" class="form-control" placeholder="Surname" required />
+        </div>
+
+        <div style="flex: 1 1 45%;">
+          <label for="name" style="display: block; font-weight: 600; margin-bottom: 4px;">Ism</label>
+          <input id="name" name="name" type="text" class="form-control" placeholder="Name" required />
+        </div>
+
+        <div style="flex: 1 1 45%;">
+          <label for="grade" style="display: block; font-weight: 600; margin-bottom: 4px;">Sinf</label>
+          <input id="grade" name="grade" type="number" class="form-control" placeholder="Grade" required />
+        </div>
+
+        <div style="flex: 1 1 20%;">
+          <label for="group" style="display: block; font-weight: 600; margin-bottom: 4px;">Gurux</label>
+          <input id="group" name="group" type="number" class="form-control" placeholder="Group" required />
+        </div>
+
+        <div style="flex: 1 1 100%; margin-top: 12px; text-align: right;">
+          <button type="submit" class="btn btn-primary" style="padding: 8px 24px; font-weight: 600;">
+            Qo'shish
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+</div>
+
+
+
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th style="text-align: left;">Telegram ID</th>
+      <th style="text-align: left;">Ism</th>
+      <th style="text-align: left;">Familya</th>
+      <th style="text-align: left;">Sinf</th>
+      <th style="text-align: left;">Gurux</th>
+      <th style="text-align: left;">Boshqaruv</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for s in students %}
+    <tr class="row-{{ s.id }}">
+      <td>
+        <input class="form-control" name="name" value="{{ s.userId }}" readonly />
+      </td>
+      <td>
+        <input class="form-control" name="name" value="{{ s.name }}" readonly />
+      </td>
+      <td>
+        <input class="form-control" name="surname" value="{{ s.surname }}" readonly />
+      </td>
+      <td>
+        <input class="form-control" name="grade" value="{{ s.grade }}" readonly />
+      </td>
+      <td>
+        <input class="form-control" name="group" value="{{ s.group }}" readonly />
+      </td>
+      <td style="width: 140px;">
+  <div style="display: flex; gap: 8px; margin-bottom: 6px;">
+    <button
+      class="btn btn-sm btn-warning"
+      id="edit-{{ s.id }}"
+      onclick="enableEdit('{{ s.id }}')"
+      style="flex: 1; height: 36px;"
+    >Edit</button>
+
+    <button
+      class="btn btn-sm btn-success d-none"
+      id="save-{{ s.id }}"
+      onclick="saveStudent('{{ s.id }}')"
+      style="flex: 1; height: 36px;"
+    >Save</button>
+  </div>
+
+  <div style="display: flex; gap: 8px;">
+    <button
+      class="btn btn-sm btn-secondary d-none"
+      id="cancel-{{ s.id }}"
+      onclick="cancelEdit('{{ s.id }}')"
+      style="flex: 1; height: 36px;"
+    >Cancel</button>
+
+    <button
+      class="btn btn-sm btn-danger"
+      onclick="deleteStudent('{{ s.id }}')"
+      style="flex: 1; height: 36px;"
+    >Delete</button>
+  </div>
+</td>
+
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

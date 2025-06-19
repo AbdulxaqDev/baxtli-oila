@@ -1,0 +1,101 @@
+{% extends "core/base.html" %}
+{% block title %}User Management{% endblock %}
+{% block content %}
+<h2>Ustozalar Boshqaruvi</h2>
+
+<h4>Yangi Ustoza Qo'shish</h4>
+<form method="post" action="{% url 'add_user' %}" class="mb-4" style="max-width: 400px; margin: 0 auto; margin-bottom: 20px;">
+  {% csrf_token %}
+  <div style="display: flex; gap: 16px; align-items: flex-end;">
+    <div style="flex: 1; margin-right: 10px;">
+      <label for="userId" style="display: block; font-weight: 600; margin-bottom: 4px;">Telegram ID</label>
+      <input
+        id="userId"
+        type="number"
+        name="userId"
+        class="form-control"
+        placeholder="Telegram ID"
+        required
+        style="width: 100%; padding: 6px 8px; border-radius: 6px; border: 1px solid #ccc;"
+      />
+    </div>
+    <div style="flex: 1;">
+      <label for="role" style="display: block; font-weight: 600; margin-bottom: 4px;">Lavozim</label>
+      <select
+        id="role"
+        name="role"
+        class="form-select"
+        required
+        style="width: 100%; padding: 6px 8px; border-radius: 6px; border: 1px solid #ccc;"
+      >
+        <option value="admin">admin</option>
+        <option value="teacher" selected>teacher</option>
+      </select>
+    </div>
+    <div>
+      <button
+        type="submit"
+        class="btn btn-primary"
+        style="padding: 8px 20px; font-weight: 600;"
+      >
+        Qo'shish
+      </button>
+    </div>
+  </div>
+</form>
+
+
+<table class="table table-bordered">
+  <thead>
+    <tr><th style="text-align: left;">Telegram ID</th><th style="text-align: left;">Lavozim</th><th style="text-align: left;">Boshqaruv</th></tr>
+  </thead>
+  <tbody>
+    {% for u in users %}
+    <tr class="row-{{ u.id }}">
+      <td>
+        <input class="form-control" name="userId" value="{{ u.userId }}" readonly />
+      </td>
+      <td>
+        <select class="form-select" name="role" disabled>
+          <option value="admin" {% if u.role == 'admin' %}selected{% endif %}>admin</option>
+          <option value="teacher" {% if u.role == 'teacher' %}selected{% endif %}>teacher</option>
+        </select>
+      </td>
+      <td style="width: 140px;">
+  <div style="display: flex; gap: 8px; margin-bottom: 6px;">
+    <button
+      class="btn btn-sm btn-warning"
+      id="edit-{{ u.id }}"
+      onclick="enableEdit('{{ u.id }}')"
+      style="flex: 1; height: 36px;"
+    >Edit</button>
+
+    <button
+      class="btn btn-sm btn-success d-none"
+      id="save-{{ u.id }}"
+      onclick="saveUser('{{ u.id }}')"
+      style="flex: 1; height: 36px;"
+    >Save</button>
+  </div>
+
+  <div style="display: flex; gap: 8px;">
+    <button
+      class="btn btn-sm btn-secondary d-none"
+      id="cancel-{{ u.id }}"
+      onclick="cancelEdit('{{ u.id }}')"
+      style="flex: 1; height: 36px;"
+    >Cancel</button>
+
+    <button
+      class="btn btn-sm btn-danger"
+      onclick="deleteUser('{{ u.id }}')"
+      style="flex: 1; height: 36px;"
+    >Delete</button>
+  </div>
+</td>
+
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

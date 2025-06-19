@@ -1,0 +1,166 @@
+from django.shortcuts import render, redirect
+from .mongo import students_col, users_col
+from bson.objectid import ObjectId
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
+import json
+from django.views.decorators.csrf import csrf_exempt
+
+
+@login_required
+def student_list(request):
+    if not request.user.role == 'admin':
+        return HttpResponse("Access Denied", status=403)
+
+    grade = request.GET.get('grade')
+    group = request.GET.get('group')
+
+    query = {}
+    if grade:
+        query['grade'] = int(grade)
+    if group:
+        query['group'] = int(group)
+
+    students = []
+    for s in students_col.find(query):
+        s['id'] = str(s['_id'])
+        students.append(s)
+
+    return render(request, 'core/student_list.html', {'students': students})
+
+@login_required
+def user_list(request):
+    if not request.user.role == 'admin':
+        return HttpResponse("Access Denied", status=403)
+
+    search_id = request.GET.get('userId')
+    query = {}
+    if search_id:
+        try:
+            query['userId'] = int(search_id)
+        except ValueError:
+            query['userId'] = -1  # no match fallback
+
+    users = []
+    for u in users_col.find(query):
+        u['id'] = str(u['_id'])
+        users.append(u)
+
+    return render(request, 'core/user_list.html', {'users': users})
+
+
+@login_required
+def add_user(request):
+    if request.method == 'POST':
+        if request.user.role != 'admin':
+            return HttpResponse("Access Denied", status=403)
+
+        userId = int(request.POST.get('userId'))
+        role = request.POST.get('role')
+
+        # prevent duplicates
+        existing = users_col.find_one({'userId': userId})
+        if existing:
+            return HttpResponse("User ID already exists", status=400)
+
+        users_col.insert_one({'userId': userId, 'role': role})
+        return redirect('user_list')
+
+
+
+
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('student_list')
+        else:
+            return HttpResponse("Invalid credentials", status=401)
+    return render(request, 'core/login.html')
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')
+
+
+@csrf_exempt
+@login_required
+def update_student(request, id):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        students_col.update_one(
+            {'_id': ObjectId(id)},
+            {'$set': {
+                'name': data['name'],
+                'surname': data['surname'],
+                'grade': int(data['grade']),
+                'group': int(data['group']),
+            }}
+        )
+        return HttpResponse(status=204)
+
+@csrf_exempt
+@login_required
+def delete_student(request, id):
+    if request.method == 'POST':
+        students_col.delete_one({'_id': ObjectId(id)})
+        return HttpResponse(status=204)
+    
+
+@csrf_exempt
+@login_required
+def update_user(request, id):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        users_col.update_one(
+            {'_id': ObjectId(id)},
+            {'$set': {
+                'userId': int(data['userId']),
+                'role': data['role'],
+            }}
+        )
+        return HttpResponse(status=204)
+
+@csrf_exempt
+@login_required
+def delete_user(request, id):
+    if request.method == 'POST':
+        users_col.delete_one({'_id': ObjectId(id)})
+        return HttpResponse(status=204)
+
+
+
+from django.views.decorators.csrf import csrf_protect
+
+@csrf_protect
+@login_required
+def add_student(request):
+    if request.method == 'POST':
+        if request.user.role != 'admin':
+            return HttpResponse("Access Denied", status=403)
+
+        telegram_id = request.POST.get('telegram_id')
+        surname = request.POST.get('surname')
+        name = request.POST.get('name')
+        grade = int(request.POST.get('grade'))
+        group = int(request.POST.get('group'))
+
+        # Default approval to "approved"
+        approval = "approved"
+
+        new_student = {
+            "userId": int(telegram_id),
+            "surname": surname,
+            "name": name,
+            "grade": grade,
+            "group": group,
+            "approval": approval,
+        }
+        students_col.insert_one(new_student)
+        return redirect('student_list')
+    else:
+        return HttpResponse("Method not allowed", status=405)

@@ -1,0 +1,35 @@
+There is a mongodb database called event_scheduler. It has two collections students and users
+
+students collection's document example:
+
+{
+  "userId": 5854428061
+  "name": "John",
+  "surname": "Doe",
+  "grade": 2,
+  "group": 1,
+  "approval": "approved"
+}
+
+
+users collection's document example:
+
+{
+  "userId": 8041146300,
+  "role": "admin"
+}
+
+The grade can be 1, 2 or 3. The group can be 1,2,3,4 or 5. The role can be admin or teacher.
+
+We need a full stack website. We use django. We need to create a beutiful ui and good ux. Need to creat crud for those collections.
+in website the users can be searched by their userId. in another page the student can be filtered by the grade and group numbers.
+a student can be edited on place and save the changes if changed the student data, or cancel editing the student if user wants,
+student can ve deleted when student is going to be delete need confirmation of the user. 
+
+And here is the notexisting part, we need to manage who can acces to app, we need to create users in django admin panel and create user with a password.
+when user comes to website they are asked for username and passwor. when user ecteres it we need to save the password and username to cookies and we do not have to
+ask the user for login again for 6 month, after 6 mongth, user promted to login again.
+
+based on the project we have to build the app.
+
+we can strt from initializing venv.
