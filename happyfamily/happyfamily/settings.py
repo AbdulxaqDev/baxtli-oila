@@ -25,7 +25,8 @@ SECRET_KEY = 'django-insecure-hw584t1tbgg%5^mww&z^c24*6ec!f1fhsb+#mnu12bgbzd@l4a
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.100.33', '0.0.0.0']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.100.33', '0.0.0.0', 'snik7.pythonanywhere.com']
+DEBUG = False
 
 
 # Application definition
@@ -116,9 +117,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 import os
-
+STATIC_ROOT = '/home/snik7/baxtli-oila/happyfamily/staticfiles'
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATIC_URL = '/static/'
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
