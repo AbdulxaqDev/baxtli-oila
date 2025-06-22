@@ -26,8 +26,6 @@ SECRET_KEY = 'django-insecure-hw584t1tbgg%5^mww&z^c24*6ec!f1fhsb+#mnu12bgbzd@l4a
 DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.100.33', '0.0.0.0', 'snik7.pythonanywhere.com']
-DEBUG = False
-
 
 # Application definition
 
@@ -140,3 +138,8 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
+
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+CSRF_TRUSTED_ORIGINS = ['https://snik7.pythonanywhere.com/']
