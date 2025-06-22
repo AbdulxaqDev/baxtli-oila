@@ -1,3 +1,4 @@
+from django.views.decorators.csrf import csrf_protect
 from django.shortcuts import render, redirect
 from .mongo import students_col, users_col
 from bson.objectid import ObjectId
@@ -6,6 +7,52 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 import json
 from django.views.decorators.csrf import csrf_exempt
+from reportlab.pdfgen import canvas
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+import os
+
+
+@login_required
+def student_pdf(request):
+    grade = request.GET.get('grade')
+    group = request.GET.get('group')
+    query = {}
+    if grade:
+        query['grade'] = int(grade)
+    if group:
+        query['group'] = int(group)
+    students = list(students_col.find(query))
+
+    # Create PDF response
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="tolibalar_{grade}_{group}.pdf"'
+
+    # Register the DejaVuSans font
+    font_path = os.path.join(os.path.dirname(
+        __file__), 'fonts', 'DejaVuSans.ttf')
+    pdfmetrics.registerFont(TTFont('DejaVuSans', font_path))
+
+    p = canvas.Canvas(response)
+    y = 800
+    p.setFont("DejaVuSans", 14)
+    p.drawString(200, y, f"{grade}-sinf, {group}-gurux tolibalar ro'yxati")
+    y -= 40
+    p.setFont("DejaVuSans", 12)
+    no = 1
+    for s in students:
+        line = f"{no}. {s.get('userId', '')} - {s.get('name', '')} {s.get('surname', '')}"
+        p.drawString(50, y, line)
+        y -= 20
+        if y < 50:
+            p.showPage()
+            y = 800
+            p.setFont("DejaVuSans", 12)
+        no += 1
+
+    p.showPage()
+    p.save()
+    return response
 
 
 @login_required
@@ -28,6 +75,7 @@ def student_list(request):
         students.append(s)
 
     return render(request, 'core/student_list.html', {'students': students})
+
 
 @login_required
 def user_list(request):
@@ -68,8 +116,6 @@ def add_user(request):
         return redirect('user_list')
 
 
-
-
 def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -81,6 +127,7 @@ def login_view(request):
         else:
             return HttpResponse("Invalid credentials", status=401)
     return render(request, 'core/login.html')
+
 
 def logout_view(request):
     logout(request)
@@ -103,13 +150,14 @@ def update_student(request, id):
         )
         return HttpResponse(status=204)
 
+
 @csrf_exempt
 @login_required
 def delete_student(request, id):
     if request.method == 'POST':
         students_col.delete_one({'_id': ObjectId(id)})
         return HttpResponse(status=204)
-    
+
 
 @csrf_exempt
 @login_required
@@ -125,6 +173,7 @@ def update_user(request, id):
         )
         return HttpResponse(status=204)
 
+
 @csrf_exempt
 @login_required
 def delete_user(request, id):
@@ -132,9 +181,6 @@ def delete_user(request, id):
         users_col.delete_one({'_id': ObjectId(id)})
         return HttpResponse(status=204)
 
-
-
-from django.views.decorators.csrf import csrf_protect
 
 @csrf_protect
 @login_required

@@ -165,6 +165,7 @@ button.btn-danger:hover {
 }
 
 .navbar {
+    
     background: #fff2e8 !important;
     box-shadow: 0 8px 24px rgb(183 78 60 / 0.15);
 }
@@ -229,49 +230,6 @@ button.btn-danger:hover {
   box-shadow: 0 0 8px rgba(183, 78, 60, 0.5);
   transition: all 0.3s ease;
 }
-.brand-color {
-  color: brown;
-}
-
-.btn-nav-primary {
-  color: brown;
-  border-color: brown;
-}
-
-.btn-nav-primary:hover {
-  background-color: #b74e3c;
-  color: white;
-  border-color: #b74e3c;
-}
-
-.btn-nav-secondary {
-  color: brown;
-  border-color: brown;
-}
-
-.btn-nav-secondary:hover {
-  background-color: #a0522d;
-  color: white;
-  border-color: #a0522d;
-}
-
-.user-label {
-  color: rgb(4, 82, 146);
-  align-self: center;
-  font-weight: 600;
-}
-
-.btn-logout {
-  color: red;
-  border-color: red;
-}
-
-.btn-logout:hover {
-  background-color: #d62828;
-  color: white;
-  border-color: #d62828;
-}
-
 
 /* Responsive styles */
 @media (max-width: 768px) {

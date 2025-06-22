@@ -15,5 +15,6 @@ urlpatterns += [
     path('delete_user/<str:id>/', views.delete_user),
     path('add_user/', views.add_user, name='add_user'),
     path('add_student/', views.add_student, name='add_student'),
-]
+    path('students/pdf/', views.student_pdf, name='student_pdf'),
 
+]
