@@ -135,7 +135,14 @@
 
 <table class="table table-bordered">
   <thead>
-    <tr><th style="text-align: left;">Telegram ID</th><th style="text-align: left;">Lavozim</th><th style="text-align: left;">Boshqaruv</th></tr>
+    <tr>
+      <th style="text-align: left;">Telegram ID</th>
+      <th style="text-align: left;">Ism</th>
+      <th style="text-align: left;">Familya</th>
+      <th style="text-align: left;">Telefon</th>
+      <th style="text-align: left;">Lavozim</th>
+      <th style="text-align: left;">Boshqaruv</th>
+    </tr>
   </thead>
   <tbody>
     {% for u in users %}
@@ -151,9 +158,6 @@
   </td>
   <td>
     <input class="form-control" name="phone_number" value="{{ u.phone_number }}" readonly />
-  </td>
-  <td>
-    <input class="form-control" name="role" value="{{ u.role }}" readonly />
   </td>
       <td>
         <select class="form-select" name="role" disabled>
