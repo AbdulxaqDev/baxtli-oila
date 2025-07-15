@@ -98,21 +98,52 @@ def user_list(request):
     return render(request, 'core/user_list.html', {'users': users})
 
 
+# @login_required
+# def add_user(request):
+#     if request.method == 'POST':
+#         if request.user.role != 'admin':
+#             return HttpResponse("Access Denied", status=403)
+
+#         userId = int(request.POST.get('userId'))
+#         role = request.POST.get('role')
+
+#         # prevent duplicates
+#         existing = users_col.find_one({'userId': userId})
+#         if existing:
+#             return HttpResponse("User ID already exists", status=400)
+
+#         users_col.insert_one({'userId': userId, 'role': role})
+#         return redirect('user_list')
+
 @login_required
 def add_user(request):
     if request.method == 'POST':
         if request.user.role != 'admin':
             return HttpResponse("Access Denied", status=403)
 
-        userId = int(request.POST.get('userId'))
+        userId = request.POST.get('userId')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        phone_number = request.POST.get('phone_number')
         role = request.POST.get('role')
+
+        if not all([userId, first_name, last_name, phone_number, role]):
+            return HttpResponse("Missing required fields", status=400)
 
         # prevent duplicates
         existing = users_col.find_one({'userId': userId})
         if existing:
             return HttpResponse("User ID already exists", status=400)
 
-        users_col.insert_one({'userId': userId, 'role': role})
+        user_data = {
+            'userId': userId,
+            'first_name': first_name,
+            'last_name': last_name,
+            'phone_number': phone_number,
+            'role': role
+        }
+
+        users_col.insert_one(user_data)
         return redirect('user_list')
 
 
